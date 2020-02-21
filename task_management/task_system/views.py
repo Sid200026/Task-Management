@@ -1,4 +1,3 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
 import logging
 
@@ -47,7 +46,7 @@ class TaskDetail(APIView):
     def get_task_instance(self, id):
         try:
             return self.model.objects.get(id=id)
-        except:
+        except:  # noqa
             raise Http404
 
     def get(self, request, id, format=None):
@@ -98,7 +97,7 @@ class TaskTrackerDetail(APIView):
     def get_task_instance(self, id):
         try:
             return self.model.objects.get(id=id)
-        except:
+        except:  # noqa
             raise Http404
 
     def get(self, request, id, format=None):
