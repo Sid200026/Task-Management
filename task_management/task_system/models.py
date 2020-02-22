@@ -7,6 +7,7 @@ class Task(models.Model):
     task_type = models.PositiveSmallIntegerField(
         verbose_name="Type of task",
         help_text="Enter the task type",
+        # The human readable form is the task name and machine readable is task id
         choices=[(tag.value["id"], tag.value["name"]) for tag in TaskTypes],
     )
     task_description = models.CharField(
@@ -32,11 +33,13 @@ class TaskTracker(models.Model):
     task_type = models.PositiveSmallIntegerField(
         verbose_name="Type of task",
         help_text="Enter the task type",
+        # The human readable form is the task name and machine readable is task id
         choices=[(tag.value["id"], tag.value["name"]) for tag in TaskTypes],
     )
     update_type = models.PositiveSmallIntegerField(
         verbose_name="Task tracking updation period",
         help_text="Enter the update type",
+        # The human readable form is the updateType name and machine readable is updateType id
         choices=[(tag.value["id"], tag.value["name"]) for tag in TaskTrackerType],
     )
     email = models.EmailField(
@@ -60,12 +63,15 @@ class TaskTracker(models.Model):
         update_type_id = self.update_type
         update_type = None
         for tag in TaskTrackerType:
+            # Get the update type name from id
             if tag.value["id"] == update_type_id:
                 update_type = tag.name
                 break
+        # Get the start date
         start_date = get_start_date(
             created_date=self.creation_time, update_type=update_type
         )
+        # Instead of getting all the fields just get the re uired fields
         return Task.objects.defer("task_description", "creation_time").filter(
             creation_time__gte=start_date, task_type=self.task_type
         )

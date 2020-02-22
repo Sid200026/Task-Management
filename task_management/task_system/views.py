@@ -12,9 +12,10 @@ from .serializers import TaskSerializer, TaskTrackerSerializer
 
 logger = logging.getLogger(__name__)
 
-
+# Define the root of the api to get the other api routes
 @api_view(["GET"])
 def apiRoot(request, format=None):
+    # Return the tasklist and trackerlist api
     api_info = {
         "tasks": reverse("task_system:tasks", request=request, format=format),
         "trackers": reverse("task_system:trackers", request=request, format=format),
@@ -27,13 +28,18 @@ class TaskList(APIView):
     model = Task
 
     def get(self, request, format=None):
+        # Get all task instances as a queryset
         tasks = self.model.objects.all()
+        # Serialize the queryset
         task_serializer = self.serializer(tasks, many=True)
+        # Return the JSON Representation
         return Response(task_serializer.data)
 
     def post(self, request, format=None):
+        # Deserialize parsed data
         task_serializer = self.serializer(data=request.data)
         if task_serializer.is_valid():
+            # Check if the submitted data is valid according to the model and save if true
             task_serializer.save()
             return Response(task_serializer.data, status=status.HTTP_201_CREATED)
         return Response(task_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -43,6 +49,7 @@ class TaskDetail(APIView):
     serializer = TaskSerializer
     model = Task
 
+    # get the task with the id or return 404
     def get_task_instance(self, id):
         try:
             return self.model.objects.get(id=id)
@@ -67,6 +74,9 @@ class TaskDetail(APIView):
         task_serializer = self.serializer(task_instance)
         task_instance.delete()
         return Response(task_serializer.data, status=status.HTTP_204_NO_CONTENT)
+
+
+# CBVs for handling the Task Tracker API Requests
 
 
 class TaskTrackerList(APIView):
