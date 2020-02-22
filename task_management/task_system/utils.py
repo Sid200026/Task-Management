@@ -34,6 +34,7 @@ def get_start_date(
     start_date = end_date - datetime.timedelta(days=update_days)
     # if the start date calculated is before the date when the tracker was created then change
     # start date to the date tracker was created
+    # This will ensure the tracker will get tasks that was created after it was created
     if start_date < created_date:
         start_date = created_date
     return start_date

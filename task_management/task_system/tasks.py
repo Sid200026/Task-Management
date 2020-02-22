@@ -12,6 +12,7 @@ def daily_update():
     daily_update_tracker = TaskTracker.objects.filter(update_type=dailyTaskTracker)
     for tracker in daily_update_tracker:
         allTasks = tracker.getTasks()
+        logger.info(tracker.email)
         for _task in allTasks:
             logger.info(_task.task_description)
 
